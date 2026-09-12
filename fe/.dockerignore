@@ -1,0 +1,11 @@
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+build/
+coverage/
+test/
+integration_test/
+prompt/
+*.log
+.DS_Store

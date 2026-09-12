@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+*.egg-info/
+.eggs/
+site/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs e arquivos locais
+logs/
+*.log
+.DS_Store
+
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+packages/
+coverage/
+fe/build/
+
+# Assistant
+assistant/logs/
+
+# Fine-tuning
+fine-tuning/.venv/
+fine-tuning/__pycache__/
+fine-tuning/**/*.pyc
+fine-tuning/adapters/
+fine-tuning/outputs/
+fine-tuning/logs/
+fine-tuning/runs/
+fine-tuning/wandb/
+fine-tuning/checkpoints/
+fine-tuning/data/*.jsonl

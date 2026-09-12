@@ -1,0 +1,11 @@
+{
+  "name": "Medical AI Chat",
+  "short_name": "Medical AI Chat",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F7FAFC",
+  "theme_color": "#006B5F",
+  "description": "Terminal academico de chat entre medico e IA.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}

@@ -1,0 +1,38 @@
+# Dependencias Python consolidadas do trabalho3.
+# Instale a partir da raiz com:
+#   python3 -m venv .venv
+#   source .venv/bin/activate
+#   pip install -r requirements.txt
+
+# APIs FastAPI: assistant e ml
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+httpx>=0.27,<1
+pydantic>=2,<3
+
+# LangChain/LangGraph usados pelo assistant
+langchain>=0.3,<1
+langgraph>=0.2,<1
+langchain-ollama>=0.2,<1
+
+# Modelo preditivo RandomForestClassifier
+joblib>=1.4,<2
+pandas>=2.2,<3
+scikit-learn==1.8.0
+numpy>=1.26,<3
+
+# Fine-tuning e inferencia local com MLX
+mlx-lm[train]
+torch
+transformers
+datasets
+accelerate
+peft
+trl
+huggingface-hub
+
+# Traducao/curadoria de dataset PubMedQA
+deep-translator
+
+# Opcional: use apenas em ambiente CUDA/NVIDIA. No Mac/MLX, deixe comentado.
+# bitsandbytes
