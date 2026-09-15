@@ -48,9 +48,24 @@ Resposta esperada:
 
 ```json
 {
+  "model_name": "RandomForestClassifier",
+  "model_version": "0.1.0",
+  "target_column": "TARGET_CANCER_MAMA_PROVAVEL",
+  "positive_class": 1,
+  "probability_meaning": "Probabilidade estimada pelo classificador para a classe positiva do alvo TARGET_CANCER_MAMA_PROVAVEL. Nao representa acuracia, precisao do modelo ou probabilidade clinica diagnostica.",
+  "model_metrics": {
+    "accuracy": 0.760875,
+    "recall": 0.424779,
+    "f1": 0.13085,
+    "precision": 0.077336,
+    "roc_auc": 0.628885,
+    "balanced_accuracy": 0.600263
+  },
   "predictions": [
     {
       "prediction": 0,
+      "positive_class_probability": 0.1234,
+      "predicted_class_probability": 0.8766,
       "probability": 0.1234,
       "positive_class": 1,
       "model_name": "RandomForestClassifier",
@@ -59,6 +74,8 @@ Resposta esperada:
   ]
 }
 ```
+
+O campo `positive_class_probability` é calculado com `predict_proba` para o registro enviado. Ele não deve ser confundido com as métricas globais do modelo, como `accuracy`, `precision`, `recall` ou `f1`, que aparecem em `model_metrics`.
 
 ## Deploy Barato no Azure
 

@@ -55,7 +55,8 @@ Criar uma API Python simples com FastAPI:
 
 - `POST /predict`
   - Recebe uma instância ou lista de instâncias no mesmo formato aceito pelo `score.py` atual.
-  - Retorna predição, probabilidade da classe positiva, nome do modelo e versão.
+  - Retorna predição, probabilidade estimada da classe positiva para o registro enviado, métricas globais do modelo, nome do modelo e versão.
+  - A probabilidade estimada por registro não deve ser descrita como acurácia, precisão global do modelo ou probabilidade diagnóstica real.
 
 Formato de request compatível com `trabalho2/deploy/azureml/sample-request.json`:
 
@@ -94,9 +95,24 @@ Resposta esperada:
 
 ```json
 {
+  "model_name": "RandomForestClassifier",
+  "model_version": "0.1.0",
+  "target_column": "TARGET_CANCER_MAMA_PROVAVEL",
+  "positive_class": 1,
+  "probability_meaning": "Probabilidade estimada pelo classificador para a classe positiva do alvo TARGET_CANCER_MAMA_PROVAVEL. Nao representa acuracia, precisao do modelo ou probabilidade clinica diagnostica.",
+  "model_metrics": {
+    "accuracy": 0.760875,
+    "recall": 0.424779,
+    "f1": 0.13085,
+    "precision": 0.077336,
+    "roc_auc": 0.628885,
+    "balanced_accuracy": 0.600263
+  },
   "predictions": [
     {
       "prediction": 0,
+      "positive_class_probability": 0.1234,
+      "predicted_class_probability": 0.8766,
       "probability": 0.1234,
       "positive_class": 1,
       "model_name": "RandomForestClassifier",
@@ -273,4 +289,3 @@ az group delete \
 - O README contém os comandos de deploy no Azure Container Apps.
 - O deploy usa escala mínima zero e limite máximo de uma réplica.
 - O projeto deixa claro que o modelo é para uso acadêmico e não deve ser usado para diagnóstico clínico.
-

@@ -171,7 +171,7 @@ A API em `ml/` carrega o arquivo:
 ml/model/random_forest.joblib
 ```
 
-O modelo recebe 24 features codificadas, valida o schema e retorna a classe prevista com probabilidade associada. A chamada direta pode ser testada com:
+O modelo recebe 24 features codificadas, valida o schema e retorna a classe prevista com a probabilidade estimada da classe positiva para o registro enviado. Essa probabilidade é a saída de `predict_proba` do classificador; ela não representa acurácia, precisão global do modelo ou probabilidade diagnóstica real. As métricas globais do modelo são retornadas separadamente em `model_metrics`. A chamada direta pode ser testada com:
 
 ```bash
 curl http://localhost:8000/health

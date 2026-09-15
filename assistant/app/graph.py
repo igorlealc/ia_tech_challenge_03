@@ -181,7 +181,9 @@ def _build_mlx_prompt(state: AssistantState) -> str:
         "Gere a resposta final ao usuario. Nao copie nem exponha o JSON clinico, "
         "as features tecnicas ou o payload enviado ao modelo preditivo. "
         "Se houver resultado do RandomForestClassifier, interprete classe, "
-        "probabilidade e limitacoes em linguagem clinica academica. "
+        "probabilidade estimada da classe positiva do modelo e limitacoes em "
+        "linguagem clinica academica. Deixe claro que essa probabilidade nao "
+        "e acuracia, precision ou probabilidade diagnostica real. "
         "Explique as fontes usadas e responda exclusivamente em portugues do Brasil."
     )
     return (
@@ -519,13 +521,24 @@ def _fallback_answer(state: AssistantState) -> str:
             )
 
         prediction = state["tool_result"]["predictions"][0]
+        probability = prediction.get(
+            "positive_class_probability",
+            prediction.get("probability"),
+        )
+        probability_text = (
+            f"{float(probability):.4f}"
+            if isinstance(probability, int | float)
+            else str(probability)
+        )
         return (
             "Analise academica local: a ferramenta preditiva RandomForestClassifier "
-            f"retornou classe {prediction['prediction']} com probabilidade "
-            f"{prediction['probability']:.4f} para a classe positiva "
+            f"retornou classe {prediction['prediction']} com probabilidade estimada "
+            f"{probability_text} para a classe positiva "
             f"{prediction['positive_class']}. Use esse resultado apenas como apoio "
-            "a triagem e correlacione com historia clinica, exame fisico, exames "
-            "complementares e validacao da equipe responsavel.\n\n"
+            "academico a triagem. Esse valor nao e acuracia, precision do modelo "
+            "nem probabilidade diagnostica real; deve ser correlacionado com "
+            "historia clinica, exame fisico, exames complementares e validacao "
+            "da equipe responsavel.\n\n"
             f"Fontes: {', '.join(sources)}."
         )
 
@@ -553,7 +566,10 @@ def _predictive_result_summary(state: AssistantState) -> str | None:
 
     prediction = predictions[0]
     predicted_class = prediction.get("prediction")
-    probability = prediction.get("probability")
+    probability = prediction.get(
+        "positive_class_probability",
+        prediction.get("probability"),
+    )
     positive_class = prediction.get("positive_class")
     model_name = prediction.get("model_name", "RandomForestClassifier")
     model_version = prediction.get("model_version")
@@ -567,9 +583,12 @@ def _predictive_result_summary(state: AssistantState) -> str | None:
 
     return (
         f"Resultado do modelo preditivo: o {model_name}{version_text} retornou "
-        f"classe {predicted_class} com probabilidade {probability_text} para a "
-        f"classe positiva {positive_class}. Esse valor deve ser interpretado "
-        "apenas como apoio academico a triagem, sem valor diagnostico isolado."
+        f"classe {predicted_class} com probabilidade estimada {probability_text} "
+        f"para a classe positiva {positive_class}. Esse valor e a saida "
+        "probabilistica do classificador para este registro; nao representa "
+        "acuracia, precision do modelo ou probabilidade diagnostica real. Deve "
+        "ser interpretado apenas como apoio academico a triagem, sem valor "
+        "diagnostico isolado."
     )
 
 

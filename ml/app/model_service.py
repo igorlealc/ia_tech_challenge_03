@@ -27,6 +27,8 @@ class ModelService:
         self.model: Any | None = None
         self.feature_names: list[str] = []
         self.positive_class = 1
+        self.target_column = "TARGET_CANCER_MAMA_PROVAVEL"
+        self.metrics: dict[str, Any] = {}
 
     @property
     def is_loaded(self) -> bool:
@@ -40,14 +42,19 @@ class ModelService:
         self.model = bundle["model"]
         self.feature_names = list(bundle["feature_names"])
         self.positive_class = int(bundle.get("positive_class", 1))
+        self.target_column = str(bundle.get("target_column", self.target_column))
+        self.metrics = dict(bundle.get("metrics") or {})
 
     def metadata(self) -> dict[str, Any]:
         return {
             "model_name": self.model_name,
             "model_version": self.model_version,
+            "target_column": self.target_column,
             "positive_class": self.positive_class,
+            "class_labels": self._class_labels(),
             "feature_count": len(self.feature_names),
             "features": self.feature_names,
+            "metrics": self.metrics,
             "loaded": self.is_loaded,
         }
 
@@ -58,20 +65,54 @@ class ModelService:
         rows = self._normalize_payload(payload)
         dataframe = self._build_dataframe(rows)
         predictions = self.model.predict(dataframe)
-        probabilities = self.model.predict_proba(dataframe)[:, self.positive_class]
+        prediction_probabilities = self.model.predict_proba(dataframe)
+        positive_class_index = self._positive_class_index()
+        positive_probabilities = prediction_probabilities[:, positive_class_index]
+        class_labels = self._class_labels()
 
         return {
+            "model_name": self.model_name,
+            "model_version": self.model_version,
+            "target_column": self.target_column,
+            "positive_class": self.positive_class,
+            "probability_meaning": (
+                "Probabilidade estimada pelo classificador para a classe positiva "
+                "do alvo TARGET_CANCER_MAMA_PROVAVEL. Nao representa acuracia, "
+                "precisao do modelo ou probabilidade clinica diagnostica."
+            ),
+            "model_metrics": self.metrics,
             "predictions": [
                 {
                     "prediction": int(prediction),
-                    "probability": float(probability),
+                    "positive_class_probability": float(positive_probability),
+                    "predicted_class_probability": float(
+                        prediction_probabilities[row_index][
+                            class_labels.index(int(prediction))
+                        ]
+                    ),
+                    "probability": float(positive_probability),
                     "positive_class": self.positive_class,
                     "model_name": self.model_name,
                     "model_version": self.model_version,
                 }
-                for prediction, probability in zip(predictions, probabilities)
+                for row_index, (prediction, positive_probability) in enumerate(
+                    zip(predictions, positive_probabilities)
+                )
             ]
         }
+
+    def _class_labels(self) -> list[int]:
+        if self.model is None:
+            return []
+        return [int(label) for label in self.model.classes_]
+
+    def _positive_class_index(self) -> int:
+        class_labels = self._class_labels()
+        if self.positive_class not in class_labels:
+            raise RuntimeError(
+                f"Classe positiva {self.positive_class} nao encontrada em {class_labels}."
+            )
+        return class_labels.index(self.positive_class)
 
     def _normalize_payload(self, payload: Any) -> list[dict[str, Any]]:
         if isinstance(payload, dict) and "features" in payload:

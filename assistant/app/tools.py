@@ -72,6 +72,43 @@ def _to_int(value: Any) -> int | None:
     return None
 
 
+def _mammogram_time_code_from_months(months: int | None) -> int:
+    if months is None:
+        return 0
+    if months < 12:
+        return 1
+    if months <= 24:
+        return 2
+    if months <= 36:
+        return 3
+    return 4
+
+
+def _mammogram_time_code_from_value(value: Any) -> int:
+    if value is None:
+        return 0
+    if isinstance(value, int) and 0 <= value <= 5:
+        return value
+    normalized = _normalized(str(value))
+    if "nunca" in normalized:
+        return 5
+    if "mais de 3" in normalized or "maior que 3" in normalized:
+        return 4
+    if "ano" in normalized:
+        years = _to_int(value)
+        if years is None:
+            return 0
+        if years == 1:
+            return 2
+        if years == 2:
+            return 2
+        if years == 3:
+            return 3
+        return 4
+    months = _to_int(value)
+    return _mammogram_time_code_from_months(months)
+
+
 def _one_hot(features: dict[str, Any], selected: str, options: list[str]) -> None:
     for option in options:
         features[option] = 1 if option == selected else 0
@@ -93,15 +130,22 @@ def _extract_age(text: str) -> int | None:
 
 def _extract_previous_mammogram_time(text: str) -> int:
     if "nunca fez mamografia" in text or "sem mamografia previa" in text:
-        return 0
+        return 5
 
     month_match = re.search(r"(?:mamografia|mamo)[^.]{0,50}?ha\s+(\d+)\s+mes", text)
     if month_match:
-        return int(month_match.group(1))
+        return _mammogram_time_code_from_months(int(month_match.group(1)))
 
     year_match = re.search(r"(?:mamografia|mamo)[^.]{0,50}?ha\s+(\d+)\s+ano", text)
     if year_match:
-        return int(year_match.group(1)) * 12
+        years = int(year_match.group(1))
+        if years == 1:
+            return 2
+        if years == 2:
+            return 2
+        if years == 3:
+            return 3
+        return 4
 
     return 0
 
@@ -150,6 +194,17 @@ def _detect_yes_no_unknown(
     return unknown_feature
 
 
+def _has_affirmed_term(text: str, terms: list[str]) -> bool:
+    for term in terms:
+        if term not in text:
+            continue
+        negated_pattern = rf"\b(?:sem|nega|ausencia de|ausente)\b[^.]{{0,30}}\b{re.escape(term)}\b"
+        if re.search(negated_pattern, text):
+            continue
+        return True
+    return False
+
+
 def _extract_json_object(text: str) -> dict[str, Any] | None:
     decoder = json.JSONDecoder()
     for match in re.finditer(r"\{", text):
@@ -183,10 +238,14 @@ def clinical_data_to_features(payload: dict[str, Any]) -> dict[str, Any] | None:
 
     features = {name: 0 for name in FEATURE_NAMES}
     features["CO_IDADE_PACIENTE_NUM"] = age
-    features["CO_TEMPO_MAMO_ANTERIOR_NUM"] = _to_int(
-        payload.get("tempo_mamografia_anterior_meses")
+    features["CO_TEMPO_MAMO_ANTERIOR_NUM"] = _mammogram_time_code_from_value(
+        payload.get("tempo_mamografia_anterior_codigo")
+        or payload.get("tempo_desde_ultima_mamografia_codigo")
+        or payload.get("tempo_mamografia_anterior_meses")
         or payload.get("tempo_desde_ultima_mamografia_meses")
-    ) or 0
+        or payload.get("tempo_mamografia_anterior")
+        or payload.get("tempo_desde_ultima_mamografia")
+    )
 
     sex = _normalized(str(payload.get("sexo") or "ignorado"))
     if sex.startswith("f") or "mulher" in sex:
@@ -407,7 +466,7 @@ def _extract_natural_language_features(text: str) -> dict[str, Any] | None:
 
     screening_terms = ["rastreamento", "rotina", "screening", "assintomatica"]
     diagnostic_terms = ["nodulo", "dor", "secrecao", "alteracao", "sintoma", "diagnostica"]
-    if any(term in normalized for term in diagnostic_terms):
+    if _has_affirmed_term(normalized, diagnostic_terms):
         _one_hot(features, "CO_IND_CLINICA_02", ["CO_IND_CLINICA_01", "CO_IND_CLINICA_02"])
         _one_hot(
             features,

@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Relatório Técnico - 8IADT Fase 3 Tech Challenge</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #18212f;
+        --muted: #5c6675;
+        --line: #d8dee8;
+        --paper: #ffffff;
+        --wash: #f4f7fb;
+        --green: #1f7a5c;
+        --blue: #235f9f;
+        --red: #a34542;
+        --gold: #9a6a16;
+        --teal-soft: #e7f4ef;
+        --blue-soft: #e7eef8;
+        --red-soft: #faeceb;
+        --gold-soft: #fff4db;
+        --shadow: 0 16px 42px rgba(24, 33, 47, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--wash);
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--blue);
+      }
+
+      .hero {
+        background:
+          linear-gradient(rgba(14, 28, 47, 0.72), rgba(14, 28, 47, 0.68)),
+          url("https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1800&q=80");
+        background-size: cover;
+        background-position: center;
+        color: #fff;
+        min-height: 58vh;
+        display: flex;
+        align-items: end;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .hero-inner,
+      main,
+      .toc-inner {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .hero-inner {
+        padding: 72px 0 56px;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #bfe6d5;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 920px;
+        font-size: clamp(2.25rem, 6vw, 4.8rem);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        max-width: 760px;
+        margin: 22px 0 0;
+        color: #e6edf6;
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+      }
+
+      .meta-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        background: rgba(255, 255, 255, 0.18);
+        margin-top: 34px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .meta-item {
+        background: rgba(16, 32, 52, 0.72);
+        padding: 16px;
+        min-width: 0;
+      }
+
+      .meta-label {
+        display: block;
+        color: #b9c7d7;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+
+      .meta-value {
+        display: block;
+        margin-top: 4px;
+        font-weight: 750;
+        overflow-wrap: anywhere;
+      }
+
+      .author-card {
+        display: inline-grid;
+        grid-template-columns: auto auto;
+        gap: 8px 18px;
+        margin-top: 24px;
+        padding: 14px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 8px;
+        background: rgba(16, 32, 52, 0.72);
+        color: #fff;
+      }
+
+      .author-card span {
+        color: #b9c7d7;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .author-card strong {
+        font-weight: 850;
+      }
+
+      .delivery-links-card {
+        display: block;
+        box-sizing: border-box;
+        max-width: 760px;
+        width: 100%;
+        margin-top: 16px;
+        padding: 14px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 8px;
+        background: rgba(16, 32, 52, 0.72);
+        color: #fff;
+      }
+
+      .delivery-links-card span {
+        display: block;
+        color: #b9c7d7;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .delivery-links-card span:not(:first-child) {
+        margin-top: 10px;
+      }
+
+      .delivery-links-card a {
+        display: block;
+        margin-top: 4px;
+        color: #fff;
+        font-weight: 850;
+        overflow-wrap: anywhere;
+      }
+
+      .pdf-only-note {
+        display: none;
+      }
+
+      .toc {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .toc-inner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 10px 0;
+      }
+
+      .toc a {
+        display: inline-flex;
+        align-items: center;
+        height: 34px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--ink);
+        background: #fff;
+        text-decoration: none;
+        font-size: 0.88rem;
+        white-space: nowrap;
+      }
+
+      main {
+        padding: 42px 0 72px;
+      }
+
+      section {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        margin: 0 0 24px;
+        padding: clamp(20px, 4vw, 34px);
+      }
+
+      h2 {
+        margin: 0 0 18px;
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        line-height: 1.15;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin: 24px 0 10px;
+        font-size: 1.05rem;
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+
+      .lead {
+        font-size: 1.08rem;
+        color: #344255;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 18px;
+        background: #fff;
+        min-width: 0;
+      }
+
+      .panel strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 5px 9px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #344255;
+        font-size: 0.84rem;
+        font-weight: 700;
+      }
+
+      .tag.green {
+        background: var(--teal-soft);
+        color: var(--green);
+        border-color: #b9dccd;
+      }
+
+      .tag.blue {
+        background: var(--blue-soft);
+        color: var(--blue);
+        border-color: #bdcde4;
+      }
+
+      .tag.gold {
+        background: var(--gold-soft);
+        color: var(--gold);
+        border-color: #ead39d;
+      }
+
+      .tag.red {
+        background: var(--red-soft);
+        color: var(--red);
+        border-color: #edc2c0;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(140px, 1fr));
+        gap: 12px;
+        overflow-x: auto;
+        padding: 6px 0 2px;
+      }
+
+      .step {
+        position: relative;
+        border: 1px solid var(--line);
+        border-top: 5px solid var(--blue);
+        border-radius: 8px;
+        padding: 16px;
+        background: #fff;
+        min-height: 138px;
+      }
+
+      .step:nth-child(2) {
+        border-top-color: var(--green);
+      }
+
+      .step:nth-child(3) {
+        border-top-color: var(--gold);
+      }
+
+      .step:nth-child(4) {
+        border-top-color: var(--red);
+      }
+
+      .step-number {
+        font-weight: 900;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .step-title {
+        display: block;
+        margin-top: 6px;
+        font-weight: 850;
+      }
+
+      .step-desc {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        font-size: 0.94rem;
+      }
+
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #edf2f8;
+        font-weight: 850;
+      }
+
+      code,
+      pre {
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      code {
+        color: #214d7a;
+        background: #eef4fb;
+        border: 1px solid #d6e4f3;
+        border-radius: 5px;
+        padding: 1px 5px;
+        overflow-wrap: anywhere;
+      }
+
+      pre {
+        overflow-x: auto;
+        background: #172033;
+        color: #edf6ff;
+        border-radius: 8px;
+        padding: 16px;
+        line-height: 1.45;
+        font-size: 0.9rem;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .metric {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        background: #fff;
+      }
+
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 6px;
+        font-size: 1.28rem;
+      }
+
+      .callout {
+        border-left: 5px solid var(--green);
+        background: var(--teal-soft);
+        padding: 16px 18px;
+        border-radius: 8px;
+        margin: 18px 0;
+      }
+
+      .warning {
+        border-left-color: var(--red);
+        background: var(--red-soft);
+      }
+
+      .evidence-list {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .evidence-list li {
+        margin: 8px 0;
+      }
+
+      footer {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto 48px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 900px) {
+        .meta-strip,
+        .grid.two,
+        .grid.three,
+        .metric-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          min-height: 62vh;
+        }
+      }
+
+      @media print {
+        @page {
+          size: A4;
+          margin: 16mm 14mm 18mm;
+
+          @bottom-center {
+            content: "Relatório Técnico - 8IADT Fase 3 | Página " counter(page) " de " counter(pages);
+            color: #5c6675;
+            font-size: 9pt;
+          }
+        }
+
+        body {
+          background: #fff;
+          font-size: 10.5pt;
+          line-height: 1.42;
+        }
+
+        .toc {
+          display: none;
+        }
+
+        .hero {
+          min-height: auto;
+          color: var(--ink);
+          background: #fff;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .hero-inner {
+          width: 100%;
+          padding: 0 0 14mm;
+        }
+
+        h1 {
+          font-size: 30pt;
+          line-height: 1.05;
+        }
+
+        h2 {
+          font-size: 17pt;
+        }
+
+        .subtitle,
+        .eyebrow {
+          color: var(--ink);
+        }
+
+        .meta-strip,
+        .meta-item {
+          background: #fff;
+          color: var(--ink);
+          border-color: var(--line);
+        }
+
+        .author-card {
+          color: var(--ink);
+          background: #fff;
+          border-color: var(--line);
+          box-shadow: none;
+        }
+
+        .delivery-links-card {
+          color: var(--ink);
+          background: #fff;
+          border-color: var(--line);
+          box-shadow: none;
+        }
+
+        .author-card span,
+        .delivery-links-card span {
+          color: var(--muted);
+        }
+
+        .delivery-links-card a {
+          color: var(--ink);
+        }
+
+        .pdf-only-note {
+          display: block;
+          margin-top: 6mm;
+          padding: 4mm 5mm;
+          border: 1px solid var(--line);
+          border-radius: 8px;
+          background: #f8fafc;
+          color: var(--ink);
+          font-size: 9.5pt;
+        }
+
+        main,
+        footer {
+          width: 100%;
+          padding: 0;
+          margin-left: 0;
+          margin-right: 0;
+        }
+
+        section {
+          box-shadow: none;
+          break-inside: avoid;
+          margin-bottom: 9mm;
+          padding: 8mm;
+        }
+
+        pre {
+          white-space: pre-wrap;
+        }
+
+        a {
+          color: var(--ink);
+          text-decoration: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">8IADT - Fase 3 - Tech Challenge</p>
+        <h1>Relatório técnico da entrega</h1>
+        <p class="subtitle">
+          Assistente médico acadêmico com LLM local fine-tuned via MLX,
+          orquestração LangGraph, API Random Forest para risco em contexto de
+          mamografia e interface Flutter Web.
+        </p>
+        <div class="author-card" aria-label="Informações do autor">
+          <span>Autor</span>
+          <strong>Igor Hadson Leal Carletti</strong>
+          <span>RM</span>
+          <strong>371634</strong>
+          <span>Autor</span>
+          <strong>Paulo Eduardo Oliveira Moreira</strong>
+          <span>RM</span>
+          <strong>373862</strong>
+        </div>
+        <div class="delivery-links-card" aria-label="Links da entrega">
+          <span>Repositório</span>
+          <a
+            href="https://github.com/igorlealc/ia_tech_challenge_03"
+            target="_blank"
+            rel="noopener noreferrer"
+          >https://github.com/igorlealc/ia_tech_challenge_03</a>
+          <span>Vídeo da apresentação</span>
+          <a
+            href="https://www.youtube.com/watch?v=zKze2eq5-9Q"
+            target="_blank"
+            rel="noopener noreferrer"
+          >https://www.youtube.com/watch?v=zKze2eq5-9Q</a>
+        </div>
+        <p class="pdf-only-note">
+          Há, no repositório, uma versão deste arquivo em HTML, disponível na
+          pasta raiz com o nome relatorio_entrega_fase3.html. Recomenda-se,
+          preferencialmente, a consulta à versão em HTML, pois ela permite uma
+          interação mais rica, além de melhor experiência de leitura, navegação
+          e visualização das tabelas.
+        </p>
+        <div class="meta-strip" aria-label="Metadados da entrega">
+          <div class="meta-item">
+            <span class="meta-label">Repositório</span>
+            <span class="meta-value">trabalho3/</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Backend IA</span>
+            <span class="meta-value">FastAPI + LangGraph + MLX</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Modelo preditivo</span>
+            <span class="meta-value">RandomForestClassifier</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Frontend</span>
+            <span class="meta-value">Flutter Web + Nginx</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Sumário">
+      <div class="toc-inner">
+        <a href="#resumo">Resumo</a>
+        <a href="#requisitos">Requisitos</a>
+        <a href="#arquitetura">Arquitetura</a>
+        <a href="#fine-tuning">Fine-tuning</a>
+        <a href="#assistente">Assistente</a>
+        <a href="#seguranca">Segurança</a>
+        <a href="#avaliacao">Avaliação</a>
+        <a href="#execucao">Execução</a>
+      </div>
+    </nav>
+
+    <main>
+      <section id="resumo">
+        <h2>Resumo Executivo</h2>
+        <p class="lead">
+          A entrega da Fase 3 implementa uma aplicação local integrada para
+          apoiar, em caráter acadêmico, a interpretação de casos clínicos
+          relacionados a rastreamento ou investigação mamária. O usuário
+          interage em linguagem natural por um chat Flutter Web; o backend
+          organiza o fluxo com LangGraph, consulta uma LLM local com adapter
+          LoRA e aciona uma API de inferência quando há dados suficientes para
+          estimar a classe positiva do alvo
+          <code>TARGET_CANCER_MAMA_PROVAVEL</code>.
+        </p>
+        <div class="callout">
+          O sistema não realiza diagnóstico, não prescreve condutas e não
+          substitui avaliação médica. Todas as respostas incluem aviso de uso
+          acadêmico e o fluxo registra auditoria local para rastreabilidade.
+        </div>
+        <div class="tag-row" aria-label="Tecnologias principais">
+          <span class="tag blue">Python</span>
+          <span class="tag blue">FastAPI</span>
+          <span class="tag green">LangGraph</span>
+          <span class="tag green">LangChain</span>
+          <span class="tag gold">MLX</span>
+          <span class="tag gold">LoRA</span>
+          <span class="tag red">Flutter Web</span>
+          <span class="tag">Docker Compose</span>
+        </div>
+      </section>
+
+      <section id="requisitos">
+        <h2>Aderência aos Requisitos do Enunciado</h2>
+        <p>
+          O arquivo <code>8IADT - Fase 3 - Tech challenge.pdf</code> define como
+          requisitos: fine-tuning de LLM com dados médicos, criação de
+          assistente com LangChain, segurança e validação, logging, explainability,
+          organização modular em Python e README completo.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Requisito obrigatório</th>
+              <th>Implementação na entrega</th>
+              <th>Arquivos principais</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Fine-tuning de LLM com dados médicos</td>
+              <td>
+                Preparação de dataset PubMedQA em formato JSONL e treinamento de
+                adapter LoRA com <code>mlx_lm.lora</code>.
+              </td>
+              <td>
+                <code>fine-tuning/1_preparar_dataset.py</code>,
+                <code>fine-tuning/2_treinar_modelo.py</code>,
+                <code>fine_tuning.sh</code>
+              </td>
+            </tr>
+            <tr>
+              <td>Assistente médico com LangChain</td>
+              <td>
+                API FastAPI com fluxo LangGraph, prompts clínico-acadêmicos,
+                chamada à LLM local e ferramenta para consultar modelo preditivo.
+              </td>
+              <td>
+                <code>assistant/app/graph.py</code>,
+                <code>assistant/app/tools.py</code>,
+                <code>assistant/app/main.py</code>
+              </td>
+            </tr>
+            <tr>
+              <td>Base estruturada e contexto atualizado</td>
+              <td>
+                Integração com a API de ML que serve o modelo Random Forest
+                treinado no trabalho anterior, usando 24 features codificadas.
+              </td>
+              <td>
+                <code>ml/app/model_service.py</code>,
+                <code>ml/model/random_forest.joblib</code>
+              </td>
+            </tr>
+            <tr>
+              <td>Segurança, validação e limites de atuação</td>
+              <td>
+                Prompt de sistema restringe diagnóstico e prescrição; respostas
+                recebem aviso acadêmico obrigatório; schemas Pydantic validam a
+                entrada do chat.
+              </td>
+              <td>
+                <code>assistant/app/safety.py</code>,
+                <code>assistant/app/schemas.py</code>
+              </td>
+            </tr>
+            <tr>
+              <td>Logging e auditoria</td>
+              <td>
+                Registro em JSONL com mensagem, decisão de uso do modelo,
+                payload clínico, features, resultado da ferramenta, fontes e
+                erros.
+              </td>
+              <td>
+                <code>assistant/app/audit.py</code>,
+                <code>assistant/logs/audit.jsonl</code>
+              </td>
+            </tr>
+            <tr>
+              <td>README e código modularizado</td>
+              <td>
+                README principal descreve execução, arquitetura, endpoints,
+                fine-tuning, Docker, artefatos e observações de segurança.
+              </td>
+              <td>
+                <code>README.md</code>,
+                <code>ml/README.md</code>,
+                <code>fe/README.md</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="arquitetura">
+        <h2>Arquitetura da Solução</h2>
+        <p>
+          A arquitetura separa a experiência de chat, a orquestração da IA e a
+          inferência supervisionada. Essa divisão facilita demonstração local,
+          auditoria e substituição futura de componentes.
+        </p>
+        <div class="timeline" aria-label="Fluxo da aplicação">
+          <div class="step">
+            <span class="step-number">01</span>
+            <span class="step-title">Flutter Web</span>
+            <div class="step-desc">
+              Médico escreve um caso ou pergunta clínica em texto livre.
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">02</span>
+            <span class="step-title">Assistant API</span>
+            <div class="step-desc">
+              FastAPI recebe <code>POST /chat/messages</code> e inicia o grafo.
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">03</span>
+            <span class="step-title">LangGraph + LLM</span>
+            <div class="step-desc">
+              Decide se há caso preditivo, extrai dados e gera resposta em PT-BR.
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">04</span>
+            <span class="step-title">ML API</span>
+            <div class="step-desc">
+              Random Forest retorna classe e probabilidade da classe positiva.
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">05</span>
+            <span class="step-title">Resposta auditada</span>
+            <div class="step-desc">
+              Resultado é interpretado com fontes, ressalvas e log local.
+            </div>
+          </div>
+        </div>
+        <h3>Componentes</h3>
+        <div class="grid three">
+          <div class="panel">
+            <strong><code>fe/</code></strong>
+            Aplicação Flutter Web com rota única, tela de chat, envio HTTP ao
+            assistant e aviso de uso acadêmico na interface.
+          </div>
+          <div class="panel">
+            <strong><code>assistant/</code></strong>
+            Backend de IA com FastAPI, LangGraph, prompts de segurança, chamadas
+            MLX e ferramenta de inferência preditiva.
+          </div>
+          <div class="panel">
+            <strong><code>ml/</code></strong>
+            API FastAPI que carrega <code>random_forest.joblib</code>, valida
+            schema e expõe endpoints de saúde, metadados e predição.
+          </div>
+        </div>
+      </section>
+
+      <section id="fine-tuning">
+        <h2>Processo de Fine-tuning</h2>
+        <p>
+          O fine-tuning usa o dataset PubMedQA como base médica acadêmica. O
+          script de preparação lê <code>fine-tuning/data/ori_pqal.json</code>,
+          transforma cada item em mensagens no formato conversacional e divide
+          os dados em treino e validação com semente fixa.
+        </p>
+        <div class="grid two">
+          <div class="panel">
+            <strong>Preparação dos dados</strong>
+            O arquivo <code>1_preparar_dataset.py</code> constrói prompts com
+            contexto, pergunta e resposta esperada, embaralha os exemplos e gera
+            <code>train.jsonl</code> e <code>validation.jsonl</code>.
+          </div>
+          <div class="panel">
+            <strong>Treinamento LoRA</strong>
+            O arquivo <code>2_treinar_modelo.py</code> executa
+            <code>mlx_lm.lora</code> sobre
+            <code>mlx-community/Llama-3.2-3B-Instruct-4bit</code>, salvando o
+            adapter em <code>fine-tuning/adapters/llama3_2_3b_pubmedqa</code>.
+          </div>
+        </div>
+        <pre><code>./fine_tuning.sh
+
+# Etapas principais:
+python fine-tuning/1_preparar_dataset.py
+python fine-tuning/2_treinar_modelo.py</code></pre>
+        <p>
+          O objetivo do adapter é especializar o comportamento do LLM para
+          perguntas biomédicas contextualizadas, mantendo a execução local em
+          Apple Silicon por meio de MLX.
+        </p>
+      </section>
+
+      <section id="assistente">
+        <h2>Assistente Médico Criado</h2>
+        <p>
+          O assistente atua como camada intermediária entre linguagem natural e
+          ferramentas estruturadas. Ele decide quando chamar o modelo
+          preditivo, extrai um payload clínico, converte esse payload em 24
+          features técnicas e interpreta a resposta para o usuário.
+        </p>
+        <div class="grid two">
+          <div class="panel">
+            <strong>Decisão de uso do modelo</strong>
+            O grafo usa termos explícitos, contexto mamário e idade; quando
+            configurado, também chama a LLM para decidir se o Random Forest deve
+            ser consultado.
+          </div>
+          <div class="panel">
+            <strong>Extração e transformação</strong>
+            A LLM extrai campos como idade, sexo, raça/cor, mamografia prévia,
+            risco elevado e indicação. O código converte isso para o schema do
+            modelo supervisionado.
+          </div>
+          <div class="panel">
+            <strong>Ferramenta preditiva</strong>
+            A tool <code>prever_risco_cancer_mama</code> faz chamada HTTP para
+            <code>ML_API_URL/predict</code> com as features estruturadas.
+          </div>
+          <div class="panel">
+            <strong>Resposta final</strong>
+            O prompt final pede interpretação da classe, da probabilidade da
+            classe positiva e das limitações, sem expor JSON ou features
+            internas ao usuário.
+          </div>
+        </div>
+        <h3>Contrato do endpoint</h3>
+        <pre><code>POST http://localhost:8010/chat/messages
+{
+  "message": "Paciente feminina, 54 anos, parda, mamografia previa..."
+}</code></pre>
+      </section>
+
+      <section id="modelo">
+        <h2>Modelo Preditivo Random Forest</h2>
+        <p>
+          A API de ML encapsula o modelo do trabalho anterior, treinado a partir
+          de dados SISCAN/DATASUS. Ela carrega o bundle
+          <code>ml/model/random_forest.joblib</code>, preservando nomes das
+          features, classe positiva, coluna alvo e métricas globais.
+        </p>
+        <div class="metric-grid">
+          <div class="metric"><span>Accuracy</span><strong>0.760875</strong></div>
+          <div class="metric"><span>Recall</span><strong>0.424779</strong></div>
+          <div class="metric"><span>F1</span><strong>0.130850</strong></div>
+          <div class="metric"><span>Precision</span><strong>0.077336</strong></div>
+          <div class="metric"><span>ROC AUC</span><strong>0.628885</strong></div>
+          <div class="metric"><span>Balanced Acc.</span><strong>0.600263</strong></div>
+        </div>
+        <div class="callout warning">
+          A probabilidade retornada pela API é a estimativa de
+          <code>predict_proba</code> para a classe positiva do modelo. Ela não
+          deve ser interpretada como probabilidade clínica diagnóstica real nem
+          como métrica global de acerto.
+        </div>
+        <p>
+          Hiperparâmetros exportados: <code>n_estimators=100</code>,
+          <code>max_depth=8</code>, <code>min_samples_leaf=10</code> e
+          <code>class_weight=balanced</code>.
+        </p>
+      </section>
+
+      <section id="seguranca">
+        <h2>Segurança, Validação e Explainability</h2>
+        <div class="grid three">
+          <div class="panel">
+            <strong>Limites clínicos</strong>
+            O prompt de sistema proíbe diagnóstico definitivo e prescrição. O
+            rodapé obrigatório informa: "Uso acadêmico; não substitui avaliação
+            clínica."
+          </div>
+          <div class="panel">
+            <strong>Validação de entrada</strong>
+            O chat usa Pydantic com tamanho máximo de mensagem, papéis
+            permitidos e contratos explícitos para requisição e resposta.
+          </div>
+          <div class="panel">
+            <strong>Auditoria</strong>
+            Cada execução registra decisão, payload clínico, features, tool
+            chamada, retorno do modelo, fontes, erros e aplicação do aviso.
+          </div>
+        </div>
+        <h3>Campos registrados no log</h3>
+        <ul class="evidence-list">
+          <li><code>should_use_predictive_model</code> e motivo da decisão.</li>
+          <li><code>clinical_payload</code> extraído da mensagem do médico.</li>
+          <li><code>features</code> enviadas ao Random Forest.</li>
+          <li><code>tool_result</code> com predição, probabilidade e métricas.</li>
+          <li><code>sources</code> e indicador de aplicação do aviso de segurança.</li>
+        </ul>
+      </section>
+
+      <section id="frontend">
+        <h2>Interface Web</h2>
+        <p>
+          O frontend foi implementado em Flutter Web como uma aplicação de chat
+          de tela única. Ele consome <code>POST /chat/messages</code>, apresenta
+          mensagens do médico e do assistente, permite limpar a conversa e
+          exibe aviso acadêmico fixo na base da tela.
+        </p>
+        <div class="grid two">
+          <div class="panel">
+            <strong>Estrutura</strong>
+            A implementação segue separação por feature, com domínio,
+            repositórios, DTOs, cliente HTTP, presenter e widgets de
+            apresentação.
+          </div>
+          <div class="panel">
+            <strong>Distribuição</strong>
+            O build Docker serve o Flutter Web via Nginx e recebe
+            <code>API_BASE_URL</code> por argumento de build.
+          </div>
+        </div>
+      </section>
+
+      <section id="avaliacao">
+        <h2>Avaliação e Resultados</h2>
+        <p>
+          A avaliação combina métricas do modelo supervisionado, verificação de
+          integração local e evidências de auditoria. A API de ML expõe
+          <code>/metadata</code> com métricas e schema, enquanto o assistant
+          registra os resultados das chamadas em <code>assistant/logs/audit.jsonl</code>.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Item avaliado</th>
+              <th>Resultado observado</th>
+              <th>Interpretação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Modelo Random Forest</td>
+              <td>ROC AUC 0.628885 e balanced accuracy 0.600263</td>
+              <td>
+                Modelo útil como apoio acadêmico exploratório, com limitações
+                importantes devido ao desbalanceamento e baixa precision.
+              </td>
+            </tr>
+            <tr>
+              <td>Fluxo automatizado</td>
+              <td>Casos mamários acionam a tool <code>prever_risco_cancer_mama</code></td>
+              <td>
+                A orquestração conecta texto livre, extração de features,
+                inferência e explicação final.
+              </td>
+            </tr>
+            <tr>
+              <td>Explainability</td>
+              <td>Resposta inclui fonte e significado da probabilidade</td>
+              <td>
+                O usuário recebe interpretação sem confundir probabilidade do
+                classificador com diagnóstico.
+              </td>
+            </tr>
+            <tr>
+              <td>Segurança</td>
+              <td>Aviso acadêmico obrigatório e logs de auditoria</td>
+              <td>
+                O sistema registra a trilha de decisão e limita a atuação do
+                assistente.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="execucao">
+        <h2>Execução Local</h2>
+        <p>
+          A entrega inclui scripts para primeira execução, treinamento e subida
+          da aplicação local. O Docker Compose inicia a API de ML e o frontend;
+          o assistant roda localmente para acessar MLX e o adapter.
+        </p>
+        <pre><code># Primeira execução: fine-tuning + aplicação
+cd trabalho3
+./primeira_execucao.sh
+
+# Execução da aplicação após adapter treinado
+./start_local.sh
+
+# Endpoints
+Frontend:  http://localhost:8080
+Assistant: http://localhost:8010/health
+ML API:    http://localhost:8000/health</code></pre>
+        <h3>Variáveis relevantes</h3>
+        <div class="tag-row">
+          <span class="tag blue">LLM_PROVIDER=mlx</span>
+          <span class="tag blue">ML_API_URL=http://localhost:8000</span>
+          <span class="tag green">EXTRACT_FEATURES_WITH_LLM=true</span>
+          <span class="tag green">TRANSLATE_TO_PTBR=true</span>
+          <span class="tag gold">MLX_ADAPTER_PATH=adapters/llama3_2_3b_pubmedqa</span>
+        </div>
+      </section>
+
+      <section id="evidencias">
+        <h2>Evidências de Código e Artefatos</h2>
+        <ul class="evidence-list">
+          <li>
+            <code>fine-tuning/data/ori_pqal.json</code>: dataset médico usado
+            para gerar exemplos de treino e validação.
+          </li>
+          <li>
+            <code>fine-tuning/adapters/llama3_2_3b_pubmedqa/</code>: adapter
+            LoRA salvo após o treinamento.
+          </li>
+          <li>
+            <code>assistant/app/graph.py</code>: fluxo LangGraph com decisão,
+            extração, tool call, geração e tradução.
+          </li>
+          <li>
+            <code>assistant/app/tools.py</code>: conversão de dados clínicos em
+            features e chamada à API preditiva.
+          </li>
+          <li>
+            <code>ml/app/model_service.py</code>: carregamento do modelo,
+            validação de schema e inferência com <code>predict_proba</code>.
+          </li>
+          <li>
+            <code>fe/lib/features/chat/</code>: implementação da interface de
+            chat em Flutter Web.
+          </li>
+        </ul>
+      </section>
+
+      <section id="limitacoes">
+        <h2>Limitações e Próximos Passos</h2>
+        <div class="grid two">
+          <div class="panel">
+            <strong>Limitações atuais</strong>
+            Dados e protocolos são acadêmicos; o modelo supervisionado tem baixa
+            precision; a extração de texto livre pode falhar; a aplicação não
+            integra prontuário real nem autenticação.
+          </div>
+          <div class="panel">
+            <strong>Evoluções recomendadas</strong>
+            Adicionar base vetorial de protocolos internos, autenticação,
+            testes end-to-end, avaliação formal da LLM, calibração do modelo e
+            validação clínica supervisionada.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Relatório gerado a partir do enunciado
+      <code>8IADT - Fase 3 - Tech challenge.pdf</code> e dos artefatos presentes
+      em <code>trabalho3/</code>. Finalidade acadêmica.
+    </footer>
+  </body>
+</html>
